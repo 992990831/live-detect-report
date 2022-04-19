@@ -56,7 +56,7 @@ function App() {
       key: 'action',
       render: (text: any, record: any) => (
         <Space size="middle">
-          <Button onClick={() => { setVisible(true) }} type="primary">查看</Button>
+          <Button onClick={() => { setVisible(true); getBestImg(record.filePath);  }} type="primary">查看</Button>
         </Space>
       ),
     },
@@ -98,7 +98,7 @@ function App() {
   }
 
   const getBestImg = (filePath: string) => {
-    let url = `http://106.75.216.135:8004/api/livedetect/best-img`;
+    let url = `http://106.75.216.135:8004/api/livedetect/best-img?filePath=${filePath}`;
     axios(url, {
       headers: { 'Content-Type': 'application/json' }
     }).then(res => {
@@ -184,7 +184,7 @@ function App() {
         
       >
         {
-            <img src={`data:image/jpeg;base64,${bestImg}`} />
+            <img style={{width:'300px'}} src={`data:image/jpeg;base64,${bestImg}`} />
           }
         </Modal>
       
