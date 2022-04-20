@@ -30,6 +30,7 @@
       "react-app/jest"
     ]
   },
+  "homepage": "pages/live-detect",
   "browserslist": {
     "production": [
       ">0.2%",
