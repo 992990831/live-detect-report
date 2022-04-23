@@ -33,7 +33,7 @@ export const Config = () => {
             title: '条款',
             dataIndex: 'terms',
             key: 'terms',
-            render: (value: string) => <p>{ (value && value.length>50) ? value.substring(0, 50) : value}</p>,
+            render: (value: string) => <p>{ (value && value.length>50) ? value.substring(0, 50) + '......' : value}</p>,
         },
         {
             title: '修改隐私条款',
