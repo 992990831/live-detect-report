@@ -15,17 +15,17 @@ type RecordType = {
     clientId: string,
     clientName: string,
     account: string,
-    result: boolean,
+    transId: string,
     createdAt: string
 }
 
-export const LiveVideoReport = () => {
+//记录验证码生成情况的报表
+//验证码的使用也会产生费用，所以需要记录
+export const SessionCodeReport = () => {
     const [visible, setVisible] = useState(false);
     const [clientsList, setClientsList] = useState<ClientDataType[]>([]);
     const [clientId, setClientId] = useState();
-    const [checkResult, setCheckResult] = useState();
     const [range, setRange] = useState<[string, string]>();
-    const [bestImg, setBestImg] = useState();
 
     const columns = [
         {
@@ -39,32 +39,17 @@ export const LiveVideoReport = () => {
             dataIndex: 'account',
         },
         {
-            title: '交易号',
-            key: 'transId',
+            title: '交易ID',
             dataIndex: 'transId',
+            key: 'transId',
+            width: '100px',
         },
         {
-            title: '检测结果',
-            dataIndex: 'result',
-            key: 'title',
-            width: 'result',
-            render: (value: boolean) => <p>{value ? "成功" : "失败"}</p>,
-        },
-        {
-            title: '检测时间',
+            title: '生成时间',
             dataIndex: 'createdAt',
             key: 'createdAt',
             width: 'result',
-        },
-        {
-            title: '查看结果',
-            key: 'action',
-            render: (text: any, record: any) => (
-                <Space size="middle">
-                    <Button onClick={() => { setVisible(true); getBestImg(record.filePath); }} type="primary">查看</Button>
-                </Space>
-            ),
-        },
+        }
     ];
 
     const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
@@ -86,10 +71,9 @@ export const LiveVideoReport = () => {
     }
 
     const getRecords = (current: number, pageSize: number) => {
-        let url = `http://106.75.216.135:8004/api/livedetect/records?pageIndex=${current}&pageSize=${pageSize}`;
+        let url = `http://106.75.216.135:8004/api/livedetect/codes?pageIndex=${current}&pageSize=${pageSize}`;
 
         clientId && (url += `&clientId=${clientId}`)
-        checkResult && (url += `&result=${checkResult}`)
         range && (url += `&start=${range[0]}&end=${range[1]}`)
 
         axios(url, {
@@ -101,16 +85,7 @@ export const LiveVideoReport = () => {
             pagination.total = res.data.count;
         });
     }
-
-    const getBestImg = (filePath: string) => {
-        let url = `http://106.75.216.135:8004/api/livedetect/best-img?filePath=${filePath}`;
-        axios(url, {
-            headers: { 'Content-Type': 'application/json' }
-        }).then(res => {
-            setBestImg(res.data);
-        });
-    }
-
+   
     const onPaginationChange = (pageIndex: number, pageSize: number) => {
         pagination.current = pageIndex;
         pagination.pageSize = pageSize;
@@ -140,16 +115,6 @@ export const LiveVideoReport = () => {
                         }
                     </Select>
                 </Col>
-                <Col span={6}>
-                    <span>检测结果:</span>
-                    <Select style={{ marginLeft: '20px', width: '40%' }} onChange={(value) => {
-                        setCheckResult(value);
-                    }}>
-                        <Option key={0} value="">-请选择-</Option>
-                        <Option key={1} value="1">成功</Option>
-                        <Option key={2} value="0">失败</Option>
-                    </Select>
-                </Col>
                 <Col span={8}>
                     <span>日期范围:</span>
                     <RangePicker style={{ marginLeft: '20px', width: '70%' }} onChange={(values, format) => {
@@ -177,23 +142,6 @@ export const LiveVideoReport = () => {
                     }),
                 }}
             />
-
-            <Modal visible={visible} title="视频截图"
-                footer={[
-                    <Button key="back" onClick={() => setVisible(false)}>
-                        关闭
-                    </Button>,
-                ]}
-                onCancel={() => {
-                    setVisible(false);
-                }}
-
-            >
-                {
-                    <img style={{ width: '300px' }} src={`data:image/jpeg;base64,${bestImg}`} />
-                }
-            </Modal>
-
         </div>
     )
 }

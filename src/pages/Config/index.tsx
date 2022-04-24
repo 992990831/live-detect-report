@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, Button, Table, Modal, Space, Select, Input } from 'antd';
 import axios from 'axios';
+import { Callback } from './CallBack';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -178,3 +179,5 @@ export const Config = () => {
         </div>
     )
 }
+
+export { Callback };
